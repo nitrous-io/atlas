@@ -1,0 +1,6 @@
+logs
+certs
+*_temp
+.env
+.ruby-version
+

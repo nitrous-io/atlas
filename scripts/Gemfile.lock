@@ -1,0 +1,23 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    dotenv (2.0.2)
+    oj (2.12.10)
+    pg (0.18.2)
+    rake (10.4.2)
+    redis (3.2.1)
+    sequel (4.24.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  dotenv
+  oj
+  pg
+  rake
+  redis
+  sequel
+
+BUNDLED WITH
+   1.10.6
