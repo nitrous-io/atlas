@@ -1,0 +1,11 @@
+proxy:
+  build: proxy
+  ports:
+    - "8080:80"
+    - "4000:4000"
+server:
+  build: server
+  net: "container:proxy"
+redisserver:
+  image: redis
+  net: "container:proxy"

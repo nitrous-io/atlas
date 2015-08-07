@@ -5,16 +5,6 @@ RUN apt-get update -qq && apt-get install -y build-essential &&\
     apt-get install -y nodejs &&\
     apt-get clean
 
-# install redis
-RUN wget http://download.redis.io/releases/redis-3.0.3.tar.gz -P /tmp/ \
-  && tar xzf /tmp/redis-3.0.3.tar.gz -C /tmp/ \
-  && cd /tmp/redis-3.0.3 \
-  && make \
-  && make install \
-  && /tmp/redis-3.0.3/utils/install_server.sh \
-  && service redis_6379 stop \
-  && rm -rf /tmp/redis-3.0.3 /tmp/redis-3.0.3.tar.gz
-
 ADD . /opt/server
 WORKDIR /opt/server
 

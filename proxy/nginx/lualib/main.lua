@@ -8,7 +8,7 @@ function get_redis_client()
 
   red:set_timeout(1000)
 
-  local ok, err = red:connect("127.0.0.1", 6379)
+  local ok, err = red:connect("redisserver", 6379)
   if not ok then
     return nil, err
   end
