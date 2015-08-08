@@ -1,4 +1,4 @@
-source 'http://production.cf.rubygems.org'
+source 'https://rubygems.org'
 
 gem 'rails', github: "rails/rails"
 gem 'sprockets-rails', github: "rails/sprockets-rails"

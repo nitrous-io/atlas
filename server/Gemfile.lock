@@ -103,7 +103,7 @@ GIT
       sprockets-rails (>= 2.0, < 4.0)
 
 GEM
-  remote: http://production.cf.rubygems.org/
+  remote: https://rubygems.org/
   specs:
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
