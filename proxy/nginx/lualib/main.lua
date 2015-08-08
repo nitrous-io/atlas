@@ -55,6 +55,51 @@ function https_request(cafile, ip, port, path, secret)
   return table.concat(response_body)
 end
 
+function send_with_websocket()
+  local client = require "resty.websocket.client"
+  local wb, err = client:new()
+  if err ~= nil then
+    ngx.log(ngx.INFO, "failed to create websocket client : ", err)
+    return ngx.exit(500)
+  end
+
+  local uri = "ws://" .. url .. ngx.var.request_uri
+
+  ngx.log(ngx.INFO, "Websocket. conneting to ", uri)
+
+  local ok, err = wb:connect(uri)
+  if not ok then
+    ngx.log(ngx.INFO, "failed to connect: " .. err)
+    return ngx.exit(500)
+  end
+
+  local data, typ, err = wb:recv_frame()
+  if not data then
+    ngx.log(ngx.INFO, "failed to receive the frame: ", err)
+    return ngx.exit(500)
+  end
+
+  ngx.log(ngx.INFO, "received: ", data, " (", typ, "): ", err)
+
+  local bytes, err = wb:send_text("copy: " .. data)
+  if not bytes then
+    ngx.log(ngx.INFO, "failed to send frame: ", err)
+    return ngx.exit(500)
+  end
+
+  local bytes, err = wb:send_close()
+  if not bytes then
+    ngx.log(ngx.INFO, "failed to send frame: ", err)
+    return ngx.exit(500)
+  end
+
+  local ok, err = wb:close()
+  if err ~= nil then
+    ngx.log(ngx.INFO, "failed to close websocket client : ", err)
+    return ngx.exit(500)
+  end
+end
+
 local base_domain = ".nitrousapp.com"
 local containers_key = "n2o:containers"
 local tls_domain = ".nitrouspro.com"
