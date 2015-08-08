@@ -60,8 +60,7 @@ ONBUILD COPY nginx $NGINX_PREFIX/
 RUN mkdir -p /opt/openresty/nginx/logs/
 ADD nginx/conf /opt/openresty/nginx/conf
 ADD nginx/lualib /opt/openresty/nginx/lualib
-ADD nginx/sites-enabled /opt/openresty/nginx/sites-enabled
-ADD nginx/sites-available /opt/openresty/nginx/sites-available
+ADD nginx/sites-available /opt/openresty/nginx/sites-enabled
 
 EXPOSE 80
 
