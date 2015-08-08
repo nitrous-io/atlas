@@ -5,11 +5,11 @@ RUN apt-get update -qq && apt-get install -y build-essential &&\
     apt-get install -y nodejs &&\
     apt-get clean
 
-ADD . /opt/server
-WORKDIR /opt/server
+ADD Gemfile /opt/server/Gemfile
+RUN cd /opt/server && bundle install
+Add . /opt/server
 
-# Setup
-RUN bundle install
+WORKDIR /opt/server
 
 # Setup rails with actioncable
 RUN ./bin/setup
