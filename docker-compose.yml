@@ -1,11 +1,19 @@
 proxy:
   build: proxy
+  volumes:
+    - "proxy/nginx/conf:/opt/openresty/nginx/conf"
+    - "proxy/nginx/lualib:/opt/openresty/nginx/lualib"
+    - "proxy/nginx/sites-available:/opt/openresty/nginx/sites-enabled"
   ports:
-    - "8080:3001"
-    - "28080:3002"
+    - "3000:3000"
+    - "3001:3001"
+    - "3002:3002"
+    - "28080:28080"
+    - "6379:6379"
 server:
   build: server
-  net: "container:proxy"
-redisserver:
+redis:
   image: redis
   net: "container:proxy"
+  volumes:
+    - "redis/data:/data"

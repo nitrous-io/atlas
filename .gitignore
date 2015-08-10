@@ -3,4 +3,5 @@ certs
 *_temp
 .env
 .ruby-version
-
+*.dump
+*.rdb
