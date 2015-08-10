@@ -5,6 +5,8 @@ proxy:
     - "proxy/nginx/lualib:/opt/openresty/nginx/lualib"
     - "proxy/nginx/sites-available:/opt/openresty/nginx/sites-enabled"
   ports:
+    - "80:80"
+    - "443:443"
     - "3000:3000"
     - "3001:3001"
     - "3002:3002"

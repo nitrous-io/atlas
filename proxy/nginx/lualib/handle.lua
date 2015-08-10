@@ -1,6 +1,6 @@
 local base_domain = ".nitrousapp.com"
 local containers_key = "n2o:containers"
-local preview_forwared_ports = { ["80"] = true, ["433"] = true }
+local preview_forwared_ports = { ["80"] = true, ["443"] = true }
 
 local cjson = require "cjson"
 

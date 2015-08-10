@@ -5,3 +5,4 @@ certs
 .ruby-version
 *.dump
 *.rdb
+proxy/nginx/cert
