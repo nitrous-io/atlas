@@ -57,11 +57,13 @@ WORKDIR $NGINX_PREFIX/
 ONBUILD RUN rm -rf conf/* html/*
 ONBUILD COPY nginx $NGINX_PREFIX/
 
-RUN mkdir -p /opt/openresty/nginx/logs/
-ADD nginx/conf /opt/openresty/nginx/conf
-ADD nginx/lualib /opt/openresty/nginx/lualib
-ADD nginx/sites-available /opt/openresty/nginx/sites-enabled
+RUN apt-get update \
+    && apt-get install -y --force-yes --no-install-recommends --fix-missing \
+    net-tools  \
+    && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /opt/openresty/nginx/logs/
 EXPOSE 80
+
 
 CMD ["nginx", "-g", "daemon off; error_log /dev/stderr info;"]
