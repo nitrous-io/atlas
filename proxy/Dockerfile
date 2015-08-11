@@ -58,6 +58,7 @@ ONBUILD RUN rm -rf conf/* html/*
 ONBUILD COPY nginx $NGINX_PREFIX/
 
 ADD nginx/cert /etc/ssl
-RUN mkdir -p /opt/openresty/nginx/logs/
+RUN mkdir -p $NGINX_PREFIX/logs/
+ADD nginx/html/ $NGINX_PREFIX/html/
 
 CMD ["nginx", "-g", "daemon off; error_log /dev/stderr info;"]
