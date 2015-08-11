@@ -2,6 +2,7 @@ package.path = './lualib/?.lua;'..package.path
 
 local cjson = require "cjson"
 local common = require "common"
+local redis_client = require "redis_client"
 
 local base_domain = ".nitrousproxy.com"
 local hosts_key = "n2o:hosts"
@@ -17,7 +18,7 @@ if not slug then
 end
 
 -- get redis client to test
-local red, err = common.get_redis_client()
+local red, err = redis_client.get_client()
 if err ~= nil then
   ngx.log(ngx.ERR, "failed to connect to redis: ", err)
   return ngx.exit(500)

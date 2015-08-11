@@ -4,6 +4,7 @@ local preview_forwared_ports = { ["80"] = true, ["443"] = true }
 
 local cjson = require "cjson"
 local common = require "common"
+local redis_client = require "redis_client"
 
 -- get container slug from uri
 local uri = ngx.var.host
@@ -15,7 +16,7 @@ if not slug then
 end
 
 -- get redis client to test
-local red, err = common.get_redis_client()
+local red, err = redis_client.get_client()
 if err ~= nil then
   ngx.log(ngx.ERR, "failed to connect to redis: ", err)
   return ngx.exit(500)
