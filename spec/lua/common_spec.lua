@@ -1,36 +1,13 @@
-describe("Busted unit testing framework", function()
-    describe("should be awesome", function()
-        it("should be easy to use", function()
-            assert.truthy("Yup.")
-        end)
+package.path = './proxy/nginx/lualib/?.lua;' .. package.path
 
-        it("should have lots of features", function()
-            -- deep check comparisons!
-            assert.are.same({ table = "great"}, { table = "great" })
-
-            -- or check by reference!
-            assert.are_not.equal({ table = "great"}, { table = "great"})
-
-            assert.truthy("this is a string") -- truthy: not false or nil
-
-            assert.True(1 == 1)
-            assert.is_true(1 == 1)
-
-            assert.falsy(nil)
-            assert.has_error(function() error("Wat") end, "Wat")
-        end)
-
-        it("should provide some shortcuts to common functions", function()
-            assert.are.unique({{ thing = 1 }, { thing = 2 }, { thing = 3 }})
-        end)
-
-        it("should have mocks and spies for functional tests", function()
-            local thing = require("thing_module")
-            spy.on(thing, "greet")
-            thing.greet("Hi!")
-
-            assert.spy(thing.greet).was.called()
-            assert.spy(thing.greet).was.called_with("Hi!")
-        end)
-    end)
+describe(".get_slug_from_uri", function()
+  it("returns subdomain", function()
+    local common = require 'common'
+    assert.are.equal(common.get_slug_from_uri('yammer.nitrousapp.com:65333', '.nitrousapp.com'), 'yammer')
+    assert.are.equal(common.get_slug_from_uri('dropbox.nitrousapp.com', '.nitrousapp.com'), 'dropbox')
+    assert.are.equal(common.get_slug_from_uri('hello.yammer.nitrousapp.com:65333', '.nitrousapp.com'), 'yammer')
+    assert.are.equal(common.get_slug_from_uri('hello.dropbox.nitrousapp.com', '.nitrousapp.com'), 'dropbox')
+    assert.are.equal(common.get_slug_from_uri('umm.hello.yammer.nitrousapp.com:65333', '.nitrousapp.com'), 'yammer')
+    assert.are.equal(common.get_slug_from_uri('trailingdot.nitrousapp.com.', '.nitrousapp.com'), 'trailingdot')
+  end)
 end)

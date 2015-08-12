@@ -1,0 +1,35 @@
+test:
+  build: spec
+  volumes:
+    - "spec/spec_helper.rb:/opt/test/spec/spec_helper.rb"
+    - "spec/integration:/opt/test/spec/integration"
+  links:
+    - proxy:server0.nitrousapp.com
+    - redis:redis
+proxy:
+  build: proxy
+  volumes:
+    - "proxy/nginx/conf:/opt/openresty/nginx/conf"
+    - "proxy/nginx/lualib:/opt/openresty/nginx/lualib"
+    - "proxy/nginx/sites-available:/opt/openresty/nginx/sites-enabled"
+    - "spec/cert:/etc/ssl"
+  ports:
+    - "80:80"
+    - "443:443"
+    - "3000:3000"
+    - "3001:3001"
+    - "3002:3002"
+    - "28080:28080"
+    - "65333:65333"
+    - "6379:6379"
+  links:
+    - server0:sever0
+  environment:
+    REDIS_DATABASE: 1
+server0:
+  build: server
+redis:
+  image: redis
+  net: "container:proxy"
+  volumes:
+    - "redis/data:/data"

@@ -60,5 +60,6 @@ ONBUILD COPY nginx $NGINX_PREFIX/
 ADD nginx/cert /etc/ssl
 RUN mkdir -p $NGINX_PREFIX/logs/
 ADD nginx/html/ $NGINX_PREFIX/html/
+ADD run.sh /tmp/run.sh
 
-CMD ["nginx", "-g", "daemon off; error_log /dev/stderr info;"]
+CMD ["/tmp/run.sh"]

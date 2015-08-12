@@ -6,3 +6,5 @@ certs
 *.dump
 *.rdb
 proxy/nginx/cert
+spec_status.txt
+settings.lua
