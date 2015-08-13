@@ -12,7 +12,10 @@ proxy:
     - "proxy/nginx/conf:/opt/openresty/nginx/conf"
     - "proxy/nginx/lualib:/opt/openresty/nginx/lualib"
     - "proxy/nginx/sites-available:/opt/openresty/nginx/sites-enabled"
-    - "spec/cert:/etc/ssl"
+    - "spec/cert/container_proxy.crt:/etc/ssl/container_proxy.crt"
+    - "spec/cert/container_proxy.key:/etc/ssl/container_proxy.crt"
+    - "spec/cert/host_proxy.crt:/etc/ssl/host_proxy.crt"
+    - "spec/cert/host_proxy.key:/etc/ssl/host_proxy.key"
   ports:
     - "80:80"
     - "443:443"

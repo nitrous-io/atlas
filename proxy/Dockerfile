@@ -5,8 +5,8 @@ FROM debian:wheezy
 RUN echo "Acquire { Retries 10; Http: {Timeout: 10;}; };" > /etc/apt/apt.conf
 RUN apt-get clean && apt-get update \
     && apt-get install -y --force-yes --no-install-recommends --fix-missing \
-    curl perl make build-essential procps dnsmasq \
-    libreadline-dev libncurses5-dev libpcre3-dev libssl-dev \
+    curl perl make build-essential procps \
+    libreadline-dev libncurses5-dev libpcre3-dev libssl-dev ca-certificates vim \
     && rm -rf /var/lib/apt/lists/*
 
 ENV OPENRESTY_VERSION 1.7.10.2
@@ -57,9 +57,8 @@ WORKDIR $NGINX_PREFIX/
 ONBUILD RUN rm -rf conf/* html/*
 ONBUILD COPY nginx $NGINX_PREFIX/
 
-ADD nginx/cert /etc/ssl
 RUN mkdir -p $NGINX_PREFIX/logs/
 ADD nginx/html/ $NGINX_PREFIX/html/
-ADD run.sh /tmp/run.sh
 
+ADD run.sh /tmp/run.sh
 CMD ["/tmp/run.sh"]
