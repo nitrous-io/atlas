@@ -28,7 +28,12 @@ proxy:
   links:
     - server0:sever0
   environment:
+    REDIS_PORT: 6379
+    REDIS_HOST: 127.0.0.1
     REDIS_DATABASE: 1
+    REDIS_TIMEOUT: 1000
+    CONTAINER_BASE_DOMAIN: ".nitrousapp.com"
+    HOST_BASE_DOMAIN: ".nitrousproxy.com"
 server0:
   build: server
 redis:

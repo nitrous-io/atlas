@@ -3,14 +3,12 @@ package.path = './lualib/?.lua;'..package.path
 local cjson = require "cjson"
 local common = require "common"
 local redis_client = require "redis_client"
-
-local base_domain = ".nitrousproxy.com"
 local hosts_key = "n2o:hosts"
 
 ngx.log(ngx.INFO, "scheme: ", ngx.var.scheme)
 -- get host slug from uri
 local uri = ngx.var.host
-local slug = common.get_slug_from_uri(uri, base_domain)
+local slug = common.get_slug_from_uri(uri, settings.proxy_base_domain)
 
 if not slug then
   ngx.log(ngx.ERR, "failed to get slug from: ", uri)

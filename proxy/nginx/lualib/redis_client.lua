@@ -7,9 +7,9 @@ local _M = {}
 function _M.get_client()
   local red = redis:new()
 
-  red:set_timeout(1000)
+  red:set_timeout(settings.redis_timeout)
 
-  local ok, err = red:connect("127.0.0.1", 6379)
+  local ok, err = red:connect(settings.redis_host, settings.redis_port)
   if not ok then
     return nil, err
   end

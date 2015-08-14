@@ -1,14 +1,14 @@
-local base_domain = ".nitrousapp.com"
-local containers_key = "n2o:containers"
-local preview_forwared_ports = { ["80"] = true, ["443"] = true }
-
 local cjson = require "cjson"
 local common = require "common"
 local redis_client = require "redis_client"
+local settings = require "settings"
+
+local containers_key = "n2o:containers"
+local preview_forwared_ports = { ["80"] = true, ["443"] = true }
 
 -- get container slug from uri
 local uri = ngx.var.host
-local slug = common.get_slug_from_uri(uri, base_domain)
+local slug = common.get_slug_from_uri(uri, settings.container_base_domain)
 
 if not slug then
   ngx.log(ngx.ERR, "failed to get slug from: ", uri)
@@ -62,5 +62,6 @@ if port == nil then
 end
 
 local url = host_ip..":"..port
+ngx.log(ngx.INFO, "redirecting to: ", url)
 ngx.var.target = url
 
