@@ -9,7 +9,7 @@ namespace :containers do
   desc 'Populate container cache from postgres'
   task :cache_populate do
     Dotenv.load
-    db = Sequel.connect(ENV['PG_URL'])
+    db = Sequel.connect(ENV['NITROUS_PG_URL'])
     redis = Redis.new(url: ENV['REDIS_URL'])
     containers_key = 'n2o:containers'
     containers_temp_key = 'n2o:containers:temp'
@@ -32,7 +32,7 @@ namespace :hosts do
   desc 'Populate hosts cache from postgres'
   task :cache_populate do
     Dotenv.load
-    db = Sequel.connect(ENV['PG_URL'])
+    db = Sequel.connect(ENV['NITROUS_PG_URL'])
     redis = Redis.new(url: ENV['REDIS_URL'])
     containers_key = 'n2o:hosts'
     containers_temp_key = 'n2o:hosts:temp'
