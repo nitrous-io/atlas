@@ -8,7 +8,7 @@ local hosts_key = "n2o:hosts"
 ngx.log(ngx.INFO, "scheme: ", ngx.var.scheme)
 -- get host slug from uri
 local uri = ngx.var.host
-local slug = common.get_slug_from_uri(uri, settings.proxy_base_domain)
+local slug = common.get_slug_from_uri(uri, settings.host_base_domain)
 
 if not slug then
   ngx.log(ngx.ERR, "failed to get slug from: ", uri)
