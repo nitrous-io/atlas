@@ -4,6 +4,7 @@ local cjson = require "cjson"
 local common = require "common"
 local redis_client = require "redis_client"
 local hosts_key = "n2o:hosts"
+local settings = require "settings"
 
 ngx.log(ngx.INFO, "scheme: ", ngx.var.scheme)
 -- get host slug from uri
