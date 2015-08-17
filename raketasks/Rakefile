@@ -7,10 +7,10 @@ require 'oj'
 
 namespace :containers do
   desc 'Populate container cache from postgres'
-  task :cache_populate do
+  task :update_cache do
     Dotenv.load
     db = Sequel.connect(ENV['NITROUS_PG_URL'])
-    redis = Redis.new(url: ENV['REDIS_URL'])
+    redis = Redis.new(host: ENV['REDIS_HOST'], port: ENV['REDIS_PORT'], db: ENV['REDIS_DATABASE'])
     containers_key = 'n2o:containers'
     containers_temp_key = 'n2o:containers:temp'
 
@@ -18,24 +18,25 @@ namespace :containers do
   SELECT containers.slug AS container_slug, containers.cid, hosts.slug AS host_slug, hosts.ip_address, hosts.freighterd_port, hosts.secret, containers.port_mappings
   FROM containers INNER JOIN hosts ON containers.host_id = hosts.id
   WHERE containers.terminated_at IS NULL
-  AND containers.user_id = 73 -- For testing
 SQL
 
+    count = 0
     db.fetch(sql) do |row|
       redis.hset(containers_temp_key, row[:container_slug], Oj.dump(row, mode: :compat))
+      count+=1
     end
-    redis.rename(containers_temp_key, containers_key)
+    redis.rename(containers_temp_key, containers_key) if count > 0
   end
 end
 
 namespace :hosts do
   desc 'Populate hosts cache from postgres'
-  task :cache_populate do
+  task :update_cache do
     Dotenv.load
     db = Sequel.connect(ENV['NITROUS_PG_URL'])
-    redis = Redis.new(url: ENV['REDIS_URL'])
-    containers_key = 'n2o:hosts'
-    containers_temp_key = 'n2o:hosts:temp'
+    redis = Redis.new(host: ENV['REDIS_HOST'], port: ENV['REDIS_PORT'], db: ENV['REDIS_DATABASE'])
+    hosts_key = 'n2o:hosts'
+    hosts_temp_key = 'n2o:hosts:temp'
 
     sql = <<-SQL
   SELECT slug, ip_address, freighterd_port
@@ -43,12 +44,14 @@ namespace :hosts do
   WHERE terminated_at IS NULL
   AND state = 'running'
   AND COALESCE(ip_address, '') != ''
-  AND hosts.user_id = 73 -- For testing
     SQL
 
+    count = 0
     db.fetch(sql) do |row|
-      redis.hset(containers_temp_key, row[:slug], Oj.dump(row, mode: :compat))
+      redis.hset(hosts_temp_key, row[:slug], Oj.dump(row, mode: :compat))
+      count += 1
     end
-    redis.rename(containers_temp_key, containers_key)
+
+    redis.rename(hosts_temp_key, hosts_key) if count > 0
   end
 end
