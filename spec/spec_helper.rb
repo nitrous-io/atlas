@@ -1,4 +1,6 @@
 require 'rest-client'
+require 'faye/websocket'
+require 'eventmachine'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

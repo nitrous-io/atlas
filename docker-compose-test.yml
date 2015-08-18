@@ -5,6 +5,7 @@ test:
     - "spec/integration:/opt/test/spec/integration"
   links:
     - proxy:server0.nitrousapp.com
+    - proxy:server1.nitrousapp.com
     - redis:redis
 proxy:
   build: proxy
@@ -19,14 +20,8 @@ proxy:
   ports:
     - "80:80"
     - "443:443"
-    - "3000:3000"
-    - "3001:3001"
-    - "3002:3002"
-    - "28080:28080"
     - "65333:65333"
     - "6379:6379"
-  links:
-    - server0:sever0
   environment:
     REDIS_PORT: 6379
     REDIS_HOST: 127.0.0.1
@@ -36,6 +31,8 @@ proxy:
     HOST_BASE_DOMAIN: ".nitrousproxy.com"
 server0:
   build: servers/http
+server1:
+  build: servers/websocket
 redis:
   image: redis
   net: "container:proxy"

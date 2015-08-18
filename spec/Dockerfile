@@ -6,6 +6,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN gem install rspec -v "3.3.0" \
-    && gem install rest-client -v "2.0.0.rc1"
+    && gem install rest-client -v "2.0.0.rc1" \
+    && gem install faye-websocket -v "0.10.0"
 
 WORKDIR /opt/test

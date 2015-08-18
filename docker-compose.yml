@@ -17,8 +17,6 @@ proxy:
     - "28080:28080"
     - "65333:65333"
     - "6379:6379"
-server:
-  build: server
 redis:
   image: redis
   net: "container:proxy"
