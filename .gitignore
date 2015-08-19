@@ -8,3 +8,4 @@ certs
 proxy/nginx/cert
 spec_status.txt
 settings.lua
+.rspec
