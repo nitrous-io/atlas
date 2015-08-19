@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Running lua unit test"
+busted
+
 docker-compose -f docker-compose-test.yml stop
 docker-compose -f docker-compose-test.yml up -d proxy redis server0 server1
 
@@ -16,4 +19,4 @@ register_server "server0" 3000
 register_server "server1" 4000
 
 docker-compose -f docker-compose-test.yml run test "rspec"
-#docker-compose -f docker-compose-test.yml stop
+docker-compose -f docker-compose-test.yml stop
