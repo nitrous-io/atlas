@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby -w
+
+require 'json'
+require 'open3'
+
+def run_command(command)
+  exit(1) unless system command
+end
+
+def get_output_from_command(command)
+  return `#{command}`.chop
+end
+
+def add_container(server_name, ports)
+  cid = get_output_from_command "docker ps | grep luaproxyexperiment_#{server_name} | awk '{print $1}'"
+  server_ip = get_output_from_command "docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{cid}"
+  data = {
+    container_slug: server_name,
+    ip_address: server_ip,
+    port_mappings: JSON.dump(ports)
+  }
+  run_command "redis-cli -h 192.168.59.103 -n 1 hset n2o:containers #{server_name} '#{JSON.dump(data)}'"
+end
+
+puts 'Running lua unit test'
+run_command('busted')
+
+run_command 'docker-compose -f docker-compose-test.yml stop'
+run_command 'docker-compose -f docker-compose-test.yml up -d proxy redis server0 server1'
+
+add_container 'server0', { preview: 3000, 4000 => 4000 }
+add_container 'server1', { preview: 4000 }
+
+run_command "docker-compose -f docker-compose-test.yml run test \"rspec\""
+run_command 'docker-compose -f docker-compose-test.yml stop'

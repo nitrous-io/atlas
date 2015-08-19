@@ -34,13 +34,13 @@ local container = cjson.decode(container_json)
 local host_ip = container["ip_address"]
 if not host_ip then
   ngx.log(ngx.ERR, "failed to get host ip from container: ", container["slug"])
-  return ngx.exit(404)
+  return ngx.exit(500)
 end
 
 -- get port mappings
 if container["port_mappings"] == nil then
-  ngx.log(ngx.ERR, "the container does not have port mappings: ", container["slug"])
-  return ngx.exit(404)
+  ngx.log(ngx.ERR, "the container's port mapping is empty: ", container["slug"])
+  return ngx.exit(500)
 end
 
 -- 1. Incoming port is 80 or 443, uses preview
@@ -57,8 +57,8 @@ if port == nil then
 end
 
 if port == nil then
-  ngx.log(ngx.ERR, "failed to find a port mapping for : ", ngx.var.server_port)
-  return ngx.exit(404)
+  ngx.log(ngx.ERR, "failed to find a port mapping for: ", ngx.var.server_port)
+  return ngx.exit(502)
 end
 
 local url = host_ip..":"..port
