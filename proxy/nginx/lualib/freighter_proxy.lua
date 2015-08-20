@@ -26,9 +26,15 @@ end
 -- get host information from redis
 local host_json, err = red:hget(hosts_key, slug)
 if not host_json then
-  ngx.log(ngx.ERR, "the host does not exist: ", slug, err)
+  ngx.log(ngx.ERR, "failed to get host: ", slug, err)
   return ngx.exit(404)
 end
+
+if host_json == ngx.null then
+  ngx.log(ngx.ERR, "the host not found: ", slug)
+  return
+end
+
 local host = cjson.decode(host_json)
 
 -- get host ip

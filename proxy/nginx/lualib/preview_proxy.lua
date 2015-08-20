@@ -25,9 +25,15 @@ end
 -- get container information from redis
 local container_json, err = red:hget(containers_key, slug)
 if not container_json then
-  ngx.log(ngx.ERR, "the container does not exist: ", slug, err)
+  ngx.log(ngx.ERR, "failed to get the container: ", slug, err)
   return ngx.exit(404)
 end
+
+if container_json == ngx.null then
+  ngx.log(ngx.ERR, "the container not found: ", slug)
+  return
+end
+
 local container = cjson.decode(container_json)
 
 -- get host ip
