@@ -9,3 +9,5 @@ proxy/nginx/cert
 spec_status.txt
 settings.lua
 .rspec
+servers/freighter/
+spec/cert/

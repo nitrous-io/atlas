@@ -3,9 +3,11 @@ test:
   volumes:
     - "spec/spec_helper.rb:/opt/test/spec/spec_helper.rb"
     - "spec/integration:/opt/test/spec/integration"
+    - "spec/cert:/opt/test/cert"
   links:
     - proxy:server0.nitrousapp.com
     - proxy:server1.nitrousapp.com
+    - proxy:freighter.n2odev.com
     - redis:redis
 proxy:
   build: proxy
@@ -17,6 +19,9 @@ proxy:
     - "spec/cert/container_proxy.key:/etc/ssl/container_proxy.key"
     - "spec/cert/host_proxy.crt:/etc/ssl/host_proxy.crt"
     - "spec/cert/host_proxy.key:/etc/ssl/host_proxy.key"
+    - "spec/cert/host.crt:/etc/ssl/host.crt"
+    - "spec/cert/host_key.crt:/etc/ssl/host_key.crt"
+    - "spec/cert/cert.crt:/etc/ssl/cert.crt"
   ports:
     - "80:80"
     - "443:443"
@@ -28,11 +33,17 @@ proxy:
     REDIS_DATABASE: 1
     REDIS_TIMEOUT: 1000
     CONTAINER_BASE_DOMAIN: ".nitrousapp.com"
-    HOST_BASE_DOMAIN: ".nitrousproxy.com"
+    HOST_BASE_DOMAIN: ".n2odev.com"
 server0:
   build: servers/http
 server1:
   build: servers/websocket
+freighter:
+  build: servers/freighter
+  privileged: true
+  volumes:
+    - "servers/freighter/freighterd:/freighterd"
+    - "servers/freighter/docker:/usr/bin/docker"
 redis:
   image: redis
   net: "container:proxy"

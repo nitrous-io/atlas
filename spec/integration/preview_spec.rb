@@ -42,3 +42,10 @@ describe 'Preview Websocket Proxy' do
     expect(success).to eq(true)
   end
 end
+
+describe 'Freighter proxy' do
+  it 'pings to freighter' do
+    RestClient::Request.execute(method: :post, url: 'https://freighter.n2odev.com/ping', timeout: 10)
+    expect(response.code).to eq(200)
+  end
+end
