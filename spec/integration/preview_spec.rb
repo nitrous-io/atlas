@@ -14,6 +14,23 @@ describe 'Preview HTTP Proxy' do
       expect(error.response).to include 'are you sure there is a server running?'
     end
   end
+
+  it 'returns 502 with error page when the port is open and server is not up' do
+    expect do
+      RestClient::Request.execute(method: :get, url: 'http://server0.nitrousapp.com:4000', timeout: 10)
+    end.to raise_error do |error|
+      expect(error).to be_a RestClient::BadGateway
+      expect(error.response).to include 'are you sure there is a server running?'
+    end
+  end
+
+  it 'returns 404 with error page when host does not exist' do
+    expect do
+      RestClient::Request.execute(method: :get, url: 'http://no_server.nitrousapp.com', timeout: 10)
+    end.to raise_error do |error|
+      expect(error).to be_a RestClient::NotFound
+    end
+  end
 end
 
 describe 'Preview Websocket Proxy' do

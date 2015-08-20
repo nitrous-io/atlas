@@ -6,6 +6,7 @@ test:
   links:
     - proxy:server0.nitrousapp.com
     - proxy:server1.nitrousapp.com
+    - proxy:no_server.nitrousapp.com
     - redis:redis
 proxy:
   build: proxy
