@@ -31,7 +31,7 @@ end
 
 if container_json == ngx.null then
   ngx.log(ngx.ERR, "the container not found: ", slug)
-  return
+  return ngx.exit(404)
 end
 
 local container = cjson.decode(container_json)

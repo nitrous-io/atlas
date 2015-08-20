@@ -32,7 +32,7 @@ end
 
 if host_json == ngx.null then
   ngx.log(ngx.ERR, "the host not found: ", slug)
-  return
+  return ngx.exit(404)
 end
 
 local host = cjson.decode(host_json)
