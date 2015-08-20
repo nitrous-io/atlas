@@ -33,13 +33,13 @@ local container = cjson.decode(container_json)
 -- get host ip
 local host_ip = container["ip_address"]
 if not host_ip then
-  ngx.log(ngx.ERR, "failed to get host ip from container: ", container["slug"])
+  ngx.log(ngx.ERR, "failed to get host ip from container: ", slug)
   return ngx.exit(500)
 end
 
 -- get port mappings
 if container["port_mappings"] == nil then
-  ngx.log(ngx.ERR, "the container's port mapping is empty: ", container["slug"])
+  ngx.log(ngx.ERR, "the container's port mapping is empty: ", slug)
   return ngx.exit(500)
 end
 
