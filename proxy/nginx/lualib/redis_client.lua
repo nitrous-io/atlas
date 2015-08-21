@@ -18,7 +18,7 @@ function _M.get_client()
     local err = red:select(settings.redis_database)
     if not err then
       ngx.log(ngx.ERR, "failed to select redis database: ", err)
-      return ngx.exit(404)
+      return ngx.exit(500)
     end
   end
 
