@@ -2,6 +2,7 @@ local cjson = require "cjson"
 local common = require "common"
 local redis_client = require "redis_client"
 local settings = require "settings"
+local resolver = require "resolver"
 
 local containers_key = "n2o:containers"
 local preview_forwared_ports = { ["80"] = true, ["443"] = true }
@@ -11,8 +12,28 @@ local uri = ngx.var.host
 local slug = common.get_slug_from_uri(uri, settings.container_base_domain)
 
 if not slug then
-  ngx.log(ngx.ERR, "failed to get slug from: ", uri)
-  return ngx.exit(404)
+  r, err = resolver.get()
+  if not r then
+    ngx.log(ngx.ERR, "failed to instantiate the resolver: ", err)
+    return ngx.exit(500)
+  end
+
+  local answers, err = r:query(uri, {qtype = r.TYPE_CNAME})
+  if err ~= nil then
+    ngx.log(ngx.ERR, "failed to query the DNS server: ", err)
+    return ngx.exit(404)
+  end
+
+  if answers.errcode then
+    ngx.log(ngx.ERR, "server returned error code: ", answers.errcode, ": ", answers.errstr)
+    return ngx.exit(404)
+  end
+
+  ngx.log(ngx.INFO, "proxy to: ", answers[1].cname)
+  slug = common.get_slug_from_uri(answers[1].cname, settings.container_base_domain)
+  if not slug then
+    ngx.log(ngx.ERR, "failed to get slug from: ", uri)
+  end
 end
 
 -- get redis client to test
@@ -51,7 +72,6 @@ end
 
 -- 1. Incoming port is 80 or 443, uses preview
 -- 2. If there is no preview port or incoming port 80 nor 443, use incomning port
-ngx.log(ngx.INFO, "server port: ", ngx.var.server_port)
 local port_mappings = cjson.decode(container["port_mappings"])
 local port
 if preview_forwared_ports[ngx.var.server_port] ~= nil then

@@ -11,7 +11,8 @@ def get_output_from_command(command)
   return `#{command}`.chop
 end
 
-def add_container(server_name, ports)
+def add_container(server_name, ports, options = {})
+  slug = options.fetch(:slug, server_name)
   cid = get_output_from_command "docker ps | grep luaproxyexperiment_#{server_name} | awk '{print $1}'"
   server_ip = get_output_from_command "docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{cid}"
   data = {
@@ -19,17 +20,20 @@ def add_container(server_name, ports)
     ip_address: server_ip,
     port_mappings: JSON.dump(ports)
   }
-  run_command "redis-cli -h 192.168.59.103 -n 1 hset n2o:containers #{server_name} '#{JSON.dump(data)}'"
+  run_command "redis-cli -h 192.168.59.103 -n 1 hset n2o:containers #{slug} '#{JSON.dump(data)}'"
 end
 
 puts 'Running lua unit test'
 run_command('busted')
 
 run_command 'docker-compose -f docker-compose-test.yml stop'
-run_command 'docker-compose -f docker-compose-test.yml up -d proxy redis server0 server1'
+run_command 'docker-compose -f docker-compose-test.yml up -d proxy redis server0 server1 server2'
 
+run_command 'redis-cli -h 192.168.59.103 -n 1 flushdb'
 add_container 'server0', { preview: 3000, 4000 => 4000 }
 add_container 'server1', { preview: 4000 }
+# TODO: This is actual host slug for xyzhang.me.
+# Need to find better way to test
+add_container 'server2', { preview: 3000 }, { slug: 'blog-120854' }
 
 run_command "docker-compose -f docker-compose-test.yml run test \"rspec\""
-run_command 'docker-compose -f docker-compose-test.yml stop'

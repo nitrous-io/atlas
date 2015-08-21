@@ -59,3 +59,10 @@ describe 'Preview Websocket Proxy' do
     expect(success).to eq(true)
   end
 end
+
+describe 'user domain' do
+  it 'should be resolved' do
+    response = RestClient::Request.execute(method: :get, url: 'xyzhang.me', timeout: 10)
+    expect(response.code).to eq(200)
+  end
+end
