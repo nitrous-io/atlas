@@ -6,7 +6,6 @@ local redis_client = require "redis_client"
 local hosts_key = "n2o:hosts"
 local settings = require "settings"
 
-ngx.log(ngx.INFO, "scheme: ", ngx.var.scheme)
 -- get host slug from uri
 local uri = ngx.var.host
 local slug = common.get_slug_from_uri(uri, settings.host_base_domain)
@@ -53,5 +52,6 @@ end
 
 ngx.header["X-FORWARDED-PORT"] = port
 local url = host_ip..":"..port
+ngx.log(ngx.INFO, "redirecting to: ", url)
 ngx.var.target = url
 
