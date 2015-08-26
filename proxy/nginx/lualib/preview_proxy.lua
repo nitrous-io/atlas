@@ -19,7 +19,7 @@ if not slug then
   end
 
   local answers, err = r:query(uri, {qtype = r.TYPE_CNAME})
-  if not answers or err ~= nil then
+  if not answers or not answers[1] or err ~= nil then
     ngx.log(ngx.ERR, "failed to query the DNS server: ", err)
     return ngx.exit(404)
   end
