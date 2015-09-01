@@ -16,6 +16,10 @@ function _M.get_slug_from_uri(uri, base_domain)
         first = i
     end
 
+    if not first then
+        return nil
+    end
+
     return string.sub(uri, first, last)
 end
 
