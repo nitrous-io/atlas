@@ -25,4 +25,11 @@ function _M.get_client()
   return red, nil
 end
 
+function _M.close_client(red)
+  local ok, err = red:set_keepalive(5000, 100)
+  if not ok then
+    ngx.log(ngx.ERR, "failed to set keepalive:: ", err)
+  end
+end
+
 return _M

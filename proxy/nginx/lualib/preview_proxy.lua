@@ -46,9 +46,12 @@ end
 -- get container information from redis
 local container_json, err = red:hget(containers_key, slug)
 if not container_json then
+  redis_client.close_client(red)
   ngx.log(ngx.ERR, "failed to get the container: ", slug, err)
   return ngx.exit(404)
 end
+
+redis_client.close_client(red)
 
 if container_json == ngx.null then
   ngx.log(ngx.ERR, "the container not found: ", slug)

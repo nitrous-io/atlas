@@ -26,8 +26,11 @@ end
 local host_json, err = red:hget(hosts_key, slug)
 if not host_json then
   ngx.log(ngx.ERR, "failed to get host: ", slug, err)
+  redis_client.close_client(red)
   return ngx.exit(404)
 end
+
+redis_client.close_client(red)
 
 if host_json == ngx.null then
   ngx.log(ngx.ERR, "the host not found: ", slug)
