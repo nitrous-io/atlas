@@ -1,5 +1,3 @@
-package.path = './lualib/?.lua;'..package.path
-
 local cjson = require "cjson"
 local common = require "common"
 local redis_client = require "redis_client"
