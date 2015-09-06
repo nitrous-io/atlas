@@ -1,8 +1,10 @@
 test:
   build: spec
   volumes:
-    - "spec/spec_helper.rb:/opt/test/spec/spec_helper.rb"
-    - "spec/integration:/opt/test/spec/integration"
+    - "./spec/spec_helper.rb:/opt/test/spec/spec_helper.rb"
+    - "./spec/integration:/opt/test/spec/integration"
+    - "./spec/lua:/opt/test/spec/lua"
+    - "./proxy/nginx/lualib:/opt/test/proxy/nginx/lualib"
   links:
     - proxy:server0.nitrousapp.com
     - proxy:server1.nitrousapp.com
@@ -12,18 +14,18 @@ test:
 proxy:
   build: proxy
   volumes:
-    - "proxy/nginx/conf:/opt/openresty/nginx/conf"
-    - "proxy/nginx/lualib:/opt/openresty/nginx/lualib"
-    - "proxy/nginx/sites-available:/opt/openresty/nginx/sites-enabled"
-    - "spec/cert/container_proxy.crt:/etc/ssl/container_proxy.crt"
-    - "spec/cert/container_proxy.key:/etc/ssl/container_proxy.key"
-    - "spec/cert/host_proxy.crt:/etc/ssl/host_proxy.crt"
-    - "spec/cert/host_proxy.key:/etc/ssl/host_proxy.key"
+    - "./proxy/nginx/conf:/opt/openresty/nginx/conf"
+    - "./proxy/nginx/lualib:/opt/openresty/nginx/lualib"
+    - "./proxy/nginx/sites-available:/opt/openresty/nginx/sites-enabled"
+    - "./spec/cert/container_proxy.crt:/etc/ssl/container_proxy.crt"
+    - "./spec/cert/container_proxy.key:/etc/ssl/container_proxy.key"
+    - "./spec/cert/host_proxy.crt:/etc/ssl/host_proxy.crt"
+    - "./spec/cert/host_proxy.key:/etc/ssl/host_proxy.key"
   ports:
     - "80:80"
     - "443:443"
     - "65333:65333"
-    - "6379:6379"
+    - "16379:6379"
   environment:
     REDIS_PORT: 6379
     REDIS_HOST: 127.0.0.1
@@ -41,4 +43,4 @@ redis:
   image: redis
   net: "container:proxy"
   volumes:
-    - "redis/data:/data"
+    - "./redis/data:/data"
