@@ -30,4 +30,4 @@ end
 
 Faye::WebSocket.load_adapter('thin')
 thin = Rack::Handler.get('thin')
-thin.run(App, Host: '0.0.0.0', Port: 4000)
+thin.run(App, Host: '0.0.0.0', Port: 65333)

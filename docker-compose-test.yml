@@ -8,8 +8,8 @@ test:
   links:
     - proxy:server0.nitrousapp.com
     - proxy:server1.nitrousapp.com
+    - proxy:server2.nitrousapp.com
     - proxy:no_server.nitrousapp.com
-    - proxy:xyzhang.me
     - redis:redis
 proxy:
   build: proxy
@@ -36,9 +36,9 @@ proxy:
 server0:
   build: servers/http
 server1:
-  build: servers/websocket
-server2:
   build: servers/http
+server2:
+  build: servers/websocket
 redis:
   image: redis
   net: "container:proxy"
