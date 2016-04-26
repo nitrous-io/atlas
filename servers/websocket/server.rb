@@ -30,4 +30,9 @@ end
 
 Faye::WebSocket.load_adapter('thin')
 thin = Rack::Handler.get('thin')
-thin.run(App, Host: '0.0.0.0', Port: 65333)
+thin.run(App, Host: '0.0.0.0', Port: 65333) do |server|
+  server.ssl_options = {
+    verify_peer: false
+  }
+  server.ssl = true
+end
