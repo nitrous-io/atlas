@@ -5,7 +5,6 @@ local settings = require "settings"
 local resolver = require "resolver"
 
 local containers_key = "n2o:containers"
-local preview_forwared_ports = { ["80"] = true, ["443"] = true }
 
 -- get container slug from uri
 local uri = ngx.var.host
@@ -32,11 +31,11 @@ if not slug then
   ngx.log(ngx.INFO, "proxy to: ", answers[1].cname)
   slug = common.get_slug_from_uri(answers[1].cname, settings.container_base_domain)
   if not slug then
-    ngx.log(ngx.ERR, "failed to get slug from: ", uri)
+    ngx.log(ngx.ERR, "failed to get container slug from: ", uri)
   end
 end
 
--- get redis client to test
+-- get redis client
 local red, err = redis_client.get_client()
 if err ~= nil then
   ngx.log(ngx.ERR, "failed to connect to redis: ", err)
@@ -67,30 +66,21 @@ if not host_ip then
   return ngx.exit(500)
 end
 
--- get port mappings
-if container["port_mappings"] == nil then
-  ngx.log(ngx.ERR, "the container's port mapping is empty: ", slug)
-  return ngx.exit(500)
+-- get freighter port
+local freighterd_port = container["freighterd_port"]
+if not freighterd_port then
+  freighterd_port = 65333
 end
 
--- 1. Incoming port is 80 or 443, uses preview
--- 2. If there is no preview port or incoming port 80 nor 443, use incomning port
-local port_mappings = cjson.decode(container["port_mappings"])
-local port
-if preview_forwared_ports[ngx.var.server_port] ~= nil then
-  port = port_mappings["preview"]
+-- get container port
+local container_port = ngx.var.server_port
+if container_port == '80' or container_port == '443' then
+  container_port = '3000'
 end
 
-if port == nil then
-  port = port_mappings[ngx.var.server_port]
-end
-
-if port == nil then
-  ngx.log(ngx.ERR, "failed to find a port mapping for: ", ngx.var.server_port)
-  return ngx.exit(502)
-end
-
-local url = host_ip..":"..port
-ngx.log(ngx.INFO, "redirecting to: ", url)
+-- proxy to host's freighter
+ngx.req.set_header("X-NITROUS-PROXY-CONTAINER-SLUG", slug)
+ngx.req.set_header("X-NITROUS-PROXY-CONTAINER-PORT", container_port)
+local url = host_ip..":"..freighterd_port
+ngx.log(ngx.INFO, "proxying to: ", url)
 ngx.var.target = url
-

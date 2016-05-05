@@ -51,7 +51,6 @@ if not port then
   return ngx.exit(404)
 end
 
-ngx.header["X-FORWARDED-PORT"] = port
 local url = host_ip..":"..port
 ngx.log(ngx.INFO, "redirecting to: ", url)
 ngx.var.target = url
