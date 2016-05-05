@@ -27,13 +27,28 @@ def add_container(server_name, freighterd_port, options = {})
   run_redis_command "hset n2o:containers #{slug} '#{JSON.dump(data)}'"
 end
 
+def add_custom_domain(domain_name, original_port, freighterd_port, container_slug, container_port)
+  cid = get_output_from_command "docker ps | grep atlas_#{container_slug} | awk '{print $1}'"
+  server_ip = get_output_from_command "docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{cid}"
+  data = {
+    host_ip: server_ip,
+    freighterd_port: freighterd_port,
+    container_slug: container_slug,
+    container_port: container_port
+  }
+  run_redis_command "hset n2o:custom_domains '#{domain_name}:#{original_port}' '#{JSON.dump(data)}'"
+end
+
 run_command 'docker-compose -f docker-compose-test.yml stop'
-run_command 'docker-compose -f docker-compose-test.yml up -d proxy redis server0 server1 server2'
+run_command 'docker-compose -f docker-compose-test.yml up -d proxy redis server0 server1 server2 server3'
 
 run_redis_command 'flushdb'
 add_container 'server0', 65333
 add_container 'server1', 65334
 add_container 'server2', 65333
+
+add_custom_domain 'www.proxygirl.com', 80, 65333, 'server3', 4000
+add_custom_domain 'www.proxygirl.com', 4000, 65333, 'server3', 4000
 
 run_command "docker-compose -f docker-compose-test.yml run test \"busted\""
 run_command "docker-compose -f docker-compose-test.yml run test \"rspec\""

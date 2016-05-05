@@ -53,3 +53,17 @@ describe 'Preview Websocket Proxy' do
     expect(success).to eq(true)
   end
 end
+
+describe 'Preview HTTP Proxy using custom domain' do
+  it 'sends a request through proxy' do
+    response = RestClient::Request.execute(method: :get, url: 'http://www.proxygirl.com', timeout: 10)
+    expect(response.body).to include('fake-https-server.py')
+    expect(response.code).to eq(200)
+  end
+
+  it 'sends a request with port through proxy' do
+    response = RestClient::Request.execute(method: :get, url: 'http://www.proxygirl.com:4000', timeout: 10)
+    expect(response.body).to include('fake-https-server.py')
+    expect(response.code).to eq(200)
+  end
+end

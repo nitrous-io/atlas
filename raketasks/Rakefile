@@ -64,7 +64,10 @@ namespace :hosts do
 
     db.fetch(sql) do |row|
       slug = row[:slug]
-      host_json = Oj.dump({ ip_address: row[:ip_address], freighterd_port: row[:freighterd_port] }, mode: :compat)
+      host_json = Oj.dump({
+        ip_address: row[:ip_address],
+        freighterd_port: row[:freighterd_port]
+      }, mode: :compat)
 
       if existing[slug]
         current_slugs << slug
@@ -79,5 +82,51 @@ namespace :hosts do
     redis.hdel(hosts_key, deleted_slugs) if deleted_slugs.length > 0
 
     puts "Updating hosts was done in #{Time.now.to_i - start_time} seconds"
+  end
+end
+
+
+namespace :custom_domains do
+  desc 'Populate custom_domains cache from postgres'
+  task :update_cache do
+    start_time = Time.now.to_i
+    Dotenv.load
+    db = Sequel.connect(ENV['NITROUS_PG_URL'])
+    redis = Redis.new(host: ENV['REDIS_HOST'], port: ENV['REDIS_PORT'], db: ENV['REDIS_DATABASE'])
+    custom_domains_key = 'n2o:custom_domains'
+
+    sql = <<-SQL
+      SELECT cd.domain, cd.port, cd.container_port, c.slug, h.freighterd_port, h.ip_address
+      FROM custom_domains AS cd
+      JOIN containers AS c ON cd.container_id = c.id
+      JOIN hosts AS h ON c.host_id = h.id
+      WHERE c.terminated_at IS NULL
+    SQL
+
+    existing = redis.hgetall(custom_domains_key)
+    current_domain_keys = []
+
+    db.fetch(sql) do |row|
+      domain_key = "#{row[:domain]}:#{row[:port]}"
+      custom_domain_json = Oj.dump({
+        host_ip: row[:ip_address],
+        freighterd_port: row[:freighterd_port],
+        container_slug: row[:slug],
+        container_port: row[:container_port]
+      }, mode: :compat)
+
+      if existing[domain_key]
+        current_domain_keys << domain_key
+        next if existing[domain_key] == custom_domain_json
+      end
+
+      redis.hset(custom_domains_key, domain_key, custom_domain_json)
+    end
+
+    # Removed custom_domains
+    deleted_custom_domains = (existing.keys - current_domain_keys)
+    redis.hdel(custom_domains_key, deleted_custom_domains) if deleted_custom_domains.length > 0
+
+    puts "Updating custom_domains was done in #{Time.now.to_i - start_time} seconds"
   end
 end

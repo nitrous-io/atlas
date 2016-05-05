@@ -10,6 +10,7 @@ test:
     - proxy:server1.nitrousapp.com
     - proxy:server2.nitrousapp.com
     - proxy:no_server.nitrousapp.com
+    - proxy:www.proxygirl.com
     - redis:redis
 proxy:
   build: proxy
@@ -39,6 +40,8 @@ server1:
   build: servers/http
 server2:
   build: servers/websocket
+server3:
+  build: servers/http
 redis:
   image: redis
   net: "container:proxy"
