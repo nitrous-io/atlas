@@ -79,6 +79,7 @@ if container_port == '80' or container_port == '443' then
 end
 
 -- proxy to host's freighter
+ngx.req.set_header("X-NITROUS-PROXY-CONTAINER-PROTO", ngx.var.scheme)
 ngx.req.set_header("X-NITROUS-PROXY-CONTAINER-SLUG", slug)
 ngx.req.set_header("X-NITROUS-PROXY-CONTAINER-PORT", container_port)
 local url = host_ip..":"..freighterd_port
